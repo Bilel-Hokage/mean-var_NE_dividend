@@ -1,0 +1,375 @@
+
+%\documentclass[a4paper,12pt]{article}
+\documentclass[10pt]{article}
+\renewcommand{\baselinestretch}{1.5} 
+
+\setlength{\parindent}{0pt}
+
+%% Language and font encodings
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[square,sort&compress]{natbib}    
+\usepackage{booktabs}
+\usepackage[french,english]{babel}
+%% Sets page size and margins
+\usepackage[top=1in,left=1.5in,bottom=1in,right=1in]{geometry}
+
+\usepackage{relsize}
+%% Useful packages
+\usepackage{amsmath, amssymb, bm}
+\usepackage{graphicx}
+\usepackage{subfig}
+\usepackage{authblk}
+\usepackage{xcolor}
+
+
+\usepackage[
+  bookmarks       = true,             % Show the bookmarks
+  unicode         = true,             % Use Unicode                 
+  pdftoolbar      = true,             % Show Acrobat’s toolbar
+  pdfmenubar      = true,             % Show Acrobat’s menu
+  pdffitwindow    = false,            % Window fit to page when opened
+  pdfstartview    = {FitH},           % Fit the page width to the window
+  pdfnewwindow    = true,             % Open the links in a new PDF window
+  colorlinks      = true,             % Use colored links
+  linkcolor       = blue,             % Internal links color
+  citecolor       = blue,            % Bibliographic links color
+  filecolor       = cyan,             % File links color
+  urlcolor        = magenta           % External links color
+]{hyperref}
+\usepackage{algorithm}
+% \usepackage{algorithmic}
+\usepackage{algorithmicx}
+\usepackage{listings}
+\usepackage{algcompatible}
+\usepackage{algpseudocode}
+\usepackage{tikz}
+\usepackage{calc}
+\usepackage{pgfplots}
+\usepackage{pdfpages}
+\pgfplotsset{compat=1.14}
+\usepackage{tikzducks}
+\usetikzlibrary{snakes}
+\usetikzlibrary{positioning}
+\usetikzlibrary{shapes,arrows}
+\usetikzlibrary{automata,arrows,positioning,calc}
+% \usepackage{cmbright}
+
+\makeatletter
+\newcounter{algorithmicH}% New algorithmic-like hyperref counter
+\let\oldalgorithmic\algorithmic
+\renewcommand{\algorithmic}{%
+  \stepcounter{algorithmicH}% Step counter
+  \oldalgorithmic}% Do what was always done with algorithmic environment
+\renewcommand{\theHALG@line}{ALG@line.\thealgorithmicH.\arabic{ALG@line}}
+\makeatother
+
+% \geometry{inner=1cm, outer=1cm, top=1cm, bottom=0cm}
+\newcommand\fillin[1]{\makebox[#1]{\dotfill}}
+% Use a modern font (that is not pixelated)
+\usepackage{kpfonts}
+% Use microtype to improve readability
+\usepackage[protrusion = true, expansion = true]{microtype} 
+% Use multiple columns
+\usepackage{multicol}
+% \usepackage{subfigure}
+% \usepackage[subfigure]{tocloft}
+% Display list of Equations
+% \usepackage{tocloft}
+% Insert empty pages
+% \usepackage{afterpage}
+% Configure style aspects of the document
+\usepackage{caption}            % To configure the captions
+\usepackage{siunitx}            % For SI units
+\usepackage{graphicx}           % To include graphics
+% \usepackage[dvipsnames]{xcolor} % To configure colors
+\usepackage{fancyhdr}           % To configure the header and footer
+% \pagestyle{fancy}               % Use a fancy header style
+% \fancyhf{}                      % Set the header format
+% \fancyheadoffset{0.0 cm}        % Set the header offset
+\lhead{\tfm}                    % Set the header right-side contents
+\rhead{\name}                   % Set the header left-side contents
+% \cfoot{\thepage}                % Set the footer page number
+\usepackage{amsthm}
+\usepackage[capitalise,nameinlink,noabbrev]{cleveref}
+\crefname{equation}{}{}
+\crefname{enumi}{}{}
+
+
+\newtheorem{lemma}{Lemma}
+\newtheorem{theo}{Theorem}
+\newtheorem{corollary}{corollary}
+\newtheorem{coro}{Corollary}
+\newtheorem{prop}{Proposition}
+\newtheorem{property}{Property}
+\newtheorem{remark}{Remark}
+\newtheorem{ex}{Example}
+\newtheorem{exercise}{Exercise}
+\newtheorem{definition}{Definition}
+\newtheorem{hp}{Assumption}
+
+% Distributions.
+\newcommand*{\UnifDist}{\mathsf{Unif}}
+\newcommand*{\ExpDist}{\mathsf{Exp}}
+\newcommand*{\DepExpDist}{\mathsf{DepExp}}
+\newcommand*{\GammaDist}{\mathsf{Gamma}}
+\newcommand*{\LognormalDist}{\mathsf{LogNorm}}
+\newcommand*{\WeibullDist}{\mathsf{Weib}}
+\newcommand*{\ParetoDist}{\mathsf{Par}}
+\newcommand*{\NormalDist}{\mathsf{Normal}}
+
+\newcommand*{\GeometricDist}{\mathsf{Geom}}
+\newcommand*{\NegBinomialDist}{\mathsf{NegBin}}
+\newcommand*{\PoissonDist}{\mathsf{Poisson}}
+
+% Sets of numbers.
+\newcommand*{\RL}{\mathbb{R}}
+\newcommand*{\NZ}{\mathbb{N}_0}
+% \newcommand*{\NL}{\mathbb{N}_+}
+
+\newcommand*{\cond}{\mid}
+\newcommand*{\given}{\,;\,}
+
+%Protocol
+\newcommand*{\PoW}{PoW\@\xspace}
+\newcommand*{\PoS}{PoS\@\xspace}
+\newcommand*{\PoSp}{PoSp\@\xspace}
+\newcommand*{\PoI}{PoI\@\xspace}
+\newcommand*{\PpS}{PpS\@\xspace}
+% Regarding spacing and abbreviations.
+\usepackage{xspace}
+
+% Acronyms
+% \@\xspace doesn't add space if next char is punctuation
+% However, these will give 2 .'s if used at end of sentence.
+\newcommand*{\eg}{e.g.\@\xspace}
+\newcommand*{\ie}{i.e.\@\xspace}
+\newcommand*{\iid}{i.i.d.\@\xspace}
+\newcommand*{\cf}{c.f.\@\xspace}
+\newcommand*{\pdf}{p.d.f.\@\xspace}
+\newcommand*{\pmf}{p.m.f.\@\xspace}
+\newcommand*{\cdf}{c.d.f.\@\xspace}
+\newcommand*{\SMC}{\textbf{SMC}\@\xspace}
+\newcommand*{\MCMC}{\textbf{MCMC}\@\xspace}
+\newcommand*{\Prob}{\mathbb{P}}
+\newcommand*{\E}{\mathbb{E}}
+
+
+\newcommand*{\iidSim}{\overset{\mathrm{i.i.d.}}{\sim}}
+\newcommand*{\bt}{\bm{\theta}}
+\newcommand*{\bTheta}{\bm{\Theta}}
+\newcommand*{\bbeta}{\bm{\beta}}
+\newcommand*{\bx}{\mathbf{x}}
+\newcommand*{\bs}{\bm{s}}
+\newcommand*{\bu}{\bm{u}}
+\newcommand*{\bn}{\bm{n}}
+
+% Roman versions of things.
+\newcommand*{\dd}{\mathop{}\!\mathrm{d}}
+\newcommand*{\e}{\mathrm{e}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+\newcommand*{\norm}[1]{\lVert{} #1\rVert}
+
+% \DeclarePairedDelimiterXPP{\ind}[1]{\ind_}{\{}{\}}{}{#1}
+\newcommand*{\ind}{\mathbb{I}}
+
+\begin{document}
+
+\title{Mining pool network and decentralization of a PoW blockchains}
+\author[1]{Hansjoerg Albrecher}
+\author[2]{Pierre-O. Goffard}
+\author[3]{Bilel Tounsi}
+\affil[1]{\footnotesize UNIL}
+\affil[2]{\footnotesize Université de Strasbourg}
+\affil[3]{\footnotesize UNIL}
+
+\date{\today }
+
+\maketitle
+\vspace{3mm}
+
+\begin{abstract}
+The Proof-of-Work (PoW) blockchain relies on miners who incur constant operational costs while receiving stochastic rewards. To mitigate financial uncertainty, many miners join Pay-Per-Share (PPS) mining pools, which provide stable payouts while transferring risk to pool managers. This paper develops a two-stage analysis of miners’ strategic behavior and pool competition. In both approaches, the pool manager’s surplus is modeled as a two-sided jump process. First, using a mean-variance trade-off approach, we characterize the optimal allocation of miners across mining pools and investigate Nash equilibrium among pools. Second, we study the pool manager’s payout problem within an expected discounted dividend framework. Using techniques from actuarial risk theory, we establish and prove the optimality of a barrier strategy under specific conditions and provide numerical methods to compute the optimal barrier and associated dividends. We then analyze the corresponding Nash equilibrium in fees under this criterion. Our findings contribute to understanding how economic incentives influence miner participation and the decentralization of PoW blockchain networks.
+\end{abstract}
+% {\it MSC 2010:} 60G55, 60G40, 12E10. \\
+% {\it Keywords:} First hitting time, blockchain, double spending problem.\\
+
+\input{introduction}
+\input{blockchain_mining_pool}
+\input{wealth_process_dividend}
+\input{mean-var}
+% \input{dividend_calculation}
+\input{blockchain_equilibrium}
+
+
+
+\section*{Acknowledgmements} 
+\bibliography{ref}
+\bibliographystyle{plainnat}
+
+\appendix
+\appendix
+
+\section{Derivatives of Participation Functions and Payoff Components}\label{appendix:derivatives}
+
+\subsection{Interior coexistence region}
+
+We consider the interior coexistence region characterized by
+\[
+D_{12}(f_1,f_2)<0,
+\qquad
+0<\gamma_{12}(f_1,f_2)<\bar{\gamma},
+\qquad
+\gamma_{12}(f_1,f_2)\ge \gamma_{10}(f_1),
+\qquad
+\gamma_{20}(f_2)\le \gamma_{12}(f_1,f_2).
+\]
+
+In this region, participation probabilities are given by
+\begin{equation}
+p_1(f_1,f_2)=\frac{\bar{\gamma}-\gamma_{12}(f_1,f_2)}{\bar{\gamma}},
+\qquad
+p_2(f_1,f_2)=\frac{\gamma_{12}(f_1,f_2)-\gamma_{20}(f_2)}{\bar{\gamma}}.
+\end{equation}
+
+\subsection{Derivative of $\gamma_{12}$}
+
+Recall that
+\begin{equation}
+\gamma_{12}(f_1,f_2)
+=
+\frac{f_2-f_1}{bD_{12}(f_1,f_2)},
+\qquad
+D_{12}(f_1,f_2)=\delta_1(1-f_1)^2-\delta_2(1-f_2)^2.
+\end{equation}
+
+Differentiating with respect to $f_1$ yields
+\begin{equation}
+\frac{\partial \gamma_{12}}{\partial f_1}
+=
+\frac{
+-\,bD_{12}(f_1,f_2)
++
+2\delta_1(1-f_1)b(f_2-f_1)
+}{
+b^2D_{12}(f_1,f_2)^2
+}.
+\end{equation}
+
+Differentiating with respect to $f_2$ yields
+\begin{equation}
+\frac{\partial \gamma_{12}}{\partial f_2}
+=
+\frac{
+bD_{12}(f_1,f_2)
+-
+2\delta_2(1-f_2)b(f_2-f_1)
+}{
+b^2D_{12}(f_1,f_2)^2
+}.
+\end{equation}
+
+\subsection{Derivative of $\gamma_{20}$}
+
+Recall that
+\begin{equation}
+\gamma_{20}(f_2)
+=
+\frac{f_2}{b\left(1-\delta_2(1-f_2)^2\right)}.
+\end{equation}
+
+Differentiating with respect to $f_2$ yields
+\begin{equation}
+\frac{\partial \gamma_{20}}{\partial f_2}
+=
+\frac{
+1-\delta_2(1-f_2)^2
+-
+2\delta_2 f_2(1-f_2)
+}{
+b\left(1-\delta_2(1-f_2)^2\right)^2
+}.
+\end{equation}
+
+\subsection{Derivatives of participation probabilities}
+
+Using the previous results, we obtain
+\begin{equation}
+\frac{\partial p_1}{\partial f_1}
+=
+-\frac{1}{\bar{\gamma}}
+\frac{\partial \gamma_{12}}{\partial f_1}
+=
+\frac{
+D_{12}(f_1,f_2)
+-
+2\delta_1(1-f_1)(f_2-f_1)
+}{
+b\bar{\gamma}\,D_{12}(f_1,f_2)^2
+}.
+\end{equation}
+
+Similarly,
+\begin{equation}
+\frac{\partial p_2}{\partial f_2}
+=
+\frac{1}{\bar{\gamma}}
+\left(
+\frac{\partial \gamma_{12}}{\partial f_2}
+-
+\frac{\partial \gamma_{20}}{\partial f_2}
+\right),
+\end{equation}
+that is,
+\begin{align}
+\frac{\partial p_2}{\partial f_2}
+&=
+\frac{1}{\bar{\gamma}}
+\left[
+\frac{
+D_{12}(f_1,f_2)
+-
+2\delta_2(1-f_2)(f_2-f_1)
+}{
+bD_{12}(f_1,f_2)^2
+}
+-
+\frac{
+1-\delta_2(1-f_2)^2
+-
+2\delta_2 f_2(1-f_2)
+}{
+b\left(1-\delta_2(1-f_2)^2\right)^2
+}
+\right].
+\end{align}
+
+\subsection{Derivatives of $B_k(f_k)$}
+
+Recall that
+\begin{equation}
+B_k(f_k)
+=
+f_k(1+\delta_k)-\delta_k
+-\eta_k b
+\Big(
+\delta_k(1-f_k)^2+(1-(1-f_k)\delta_k)^2
+\Big).
+\end{equation}
+
+Differentiating with respect to $f_k$ yields
+\begin{equation}
+B_k'(f_k)
+=
+(1+\delta_k)
+-
+2\eta_k b\delta_k
+\Big((1+\delta_k)f_k-\delta_k\Big).
+\end{equation}
+
+
+
+\end{document}
+

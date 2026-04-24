@@ -1,0 +1,24 @@
+% !TEX root = ../main.tex
+
+
+\section{Introduction}\label{sec:introduction}
+
+
+
+
+The Proof-of-Work (PoW) blockchain consensus mechanism, as first introduced by \citet{nakamoto2008bitcoin}, forms the foundation of decentralized cryptocurrencies such as Bitcoin. This system relies on miners who expend computational resources to validate transactions and secure the network. However, mining is characterized by a dual-risk structure: miners face a constant operational cost (electricity, hardware maintenance) while their rewards---block subsidies and transaction fees---are inherently stochastic and infrequent. This financial uncertainty poses a significant challenge, as it directly impacts the sustainability of individual miners.\\
+
+
+\noindent To mitigate this volatility, miners often choose to join mining pools. These pools aggregate computational power, distribute rewards more predictably, and ensure more stable revenue streams. Among the various pooling strategies, the Pay-per-Share (PPS) model \citep{albrecher2022blockchain,schrijvers2016incentive,rosenfeld2011analysis} provides miners with a fixed payout per valid share they contribute, effectively transferring risk to the pool manager.\\
+
+
+\noindent Miners must make a strategic decision regarding participation in a mining pool, balancing expected revenue against the risk of ruin. This decision can be analyzed using an expected discounted dividend approach, which evaluates the long-term viability of miners given their financial constraints. In this context, optimal dividend strategies, such as the barrier strategy \citep{avanzi2007optimal}, emerge as critical tools for sustaining miner operations and maximizing profitability. These strategies rely on results from fluctuation theory and scale functions \citep{bayraktar2013optimal} to determine optimal capital retention and payout policies.\\
+
+
+\noindent While extensive research exists on individual miner strategies, the surplus process of the pool manager remains relatively unexplored. It can be modeled as a two-sided jump process, incorporating incoming miner contributions and outgoing payouts. However, existing literature provides limited results on optimal surplus management in this setting. In this paper, we establish that a band strategy is optimal in general and that a simple barrier strategy becomes under certain restrictions. We further develop numerical methods to identify the optimal barrier level and compute corresponding dividends.\\
+
+
+\noindent Beyond individual miner and pool manager strategies, we leverage our findings to analyze the equilibrium distribution of miners across available mining pools. By considering a set of miners and a set of pool managers, we derive insights into how miners allocate their computational power in response to different payout schemes and risk profiles. Our study further extends to a numerical investigation of Nash equilibria, illustrating the strategic interactions between miners and pool managers in a competitive setting.\\
+
+
+\noindent This research contributes to the ongoing discourse on decentralization in PoW blockchains. By providing a framework for mining pool strategies and decision-making, we offer insights into how economic incentives shape miner participation, thereby influencing the overall decentralization and stability of blockchain networks.

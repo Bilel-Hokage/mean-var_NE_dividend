@@ -1,0 +1,581 @@
+\section{Competition between pools with mean-variance preferences}
+
+We consider a mining ecosystem composed of a population of heterogeneous miners and two PPS pool managers. The interaction is modeled as a static game in which for a given difficulty reduction $(\delta_1,\delta_2)$ $\in(0,1]^2$, pool managers compete through fees, anticipating the participation decisions of miners who evaluate available options according to a mean--variance criterion.
+
+\subsection{Miners' mean-variance}
+
+Consider a population of $n$ miners, indexed by $i = 1, \dots, n$. Each miner $i$ 
+is characterized by a block discovery rate $\lambda_i > 0$, an operational cost 
+$c_i \geq 0$, and a risk-aversion parameter $\gamma_i > 0$. The miner can choose between solo mining, indexed by $k=0$, and two PPS pools, indexed by $k=1,2$. For a given contractual pair $(f_k,\delta_k)$, the miner's wealth process over a time horizon $T$ follows the PPS formulation (\ref{sec:mining_pool}) introduced in Section \ref{sec:sub_mining_pool}. The miner evaluates option $k$ according to the mean--variance criterion
+\begin{equation}
+S_i(k)
+:=
+\mathbb{E}\!\left[X_T^{(i,k)}\right]
+-
+\gamma_i\,\mathrm{Var}\!\left(X_T^{(i,k)}\right).
+\end{equation}
+The expected wealth is
+\begin{equation}
+\mathbb{E}\!\left[X_T^{(i,k)}\right]
+=
+x-c_iT+T\frac{\lambda_i}{\delta_k}b(1-f_k)\delta_k
+=
+x-c_iT+T\lambda_i b(1-f_k),
+\end{equation}
+while the variance is
+\begin{equation}
+\mathrm{Var}\!\left(X_T^{(i,k)}\right)
+=
+T\frac{\lambda_i}{\delta_k}b^2(1-f_k)^2\delta_k^2
+=
+T\lambda_i b^2(1-f_k)^2\delta_k.
+\end{equation}
+Hence,
+\begin{equation}
+S_i(k)
+=
+x-c_iT
++
+T\lambda_i
+\left(
+b(1-f_k)-\gamma_i b^2(1-f_k)^2\delta_k
+\right).
+\end{equation}
+Since the additive term $x-cT$ and the multiplicative term $T$ are common across options, the miner's decision is independent of the horizon $T$.
+
+For solo mining, we set $(f_0,\delta_0)=(0,1)$, which gives
+\begin{equation*}
+S_i(0)=\lambda_i\left(b-\gamma_i b^2\right).
+\end{equation*}
+For participation in pool $k\in\{1,2\}$,
+\begin{equation*}
+S_i(k)
+=
+\lambda_i\left(
+b(1-f_k)-\gamma_i b^2(1-f_k)^2\delta_k
+\right).
+\end{equation*}
+The miner therefore chooses
+\begin{equation}\label{eq:miner_opti}
+k_i^*\in\arg\max_{k\in\{0,1,2\}} S_i(k).
+\end{equation}
+Because $\lambda_i>0$ is a common multiplicative factor across all options, it does not affect the ranking of the alternatives. As expressed \citet{goffard2025hashpower}, when we use the mean-variance criterion, miner's decision depends only on $\gamma_i$ and on the contractual parameters $(f_k,\delta_k)$. Thus, miners with identical risk preferences choose the same option and allocate their entire hashrate to the pool that maximizes their objective function.
+
+\subsection{Pool managers mean-variance}
+
+For a given horizon $T=1$, the surplus process of pool manager $k$ associated with a contractual pair $(f_k,\delta_k)$ is the compound Poisson process (\ref{eq:surplus_pool_manager}). Its expectation is given by
+\begin{equation}\label{eq:mean_pool_mana}
+\mathbb{E}\!\left[Y_t^{(k)}\right]
+=
+y_k+\mu_k \,\frac{b\delta_k}{1+\delta_k}\big(f_k(1+\delta_k)-\delta_k\big),\\
+\end{equation}
+and its variance is given by
+\begin{equation}\label{eq:var_pool_mana}
+\mathrm{Var}\!\left(Y_t^{(k)}\right)
+=
+\mu_k 
+\left[
+\frac{b^2(1-f_k)^2\delta_k^2}{1+\delta_k}
++
+\frac{b^2\delta_k\big(1-(1-f_k)\delta_k\big)^2}{1+\delta_k}
+\right],
+\end{equation}
+where $\mu_k$ denotes the share-arrival intensity of pool $k$, as introduced in 
+Section~\ref{ssec:pool_manager_process}. For a fixed difficulty reduction $\delta_k$, 
+pools compete solely through their fee. Consequently, the total hashpower 
+attracted by pool $k$ depends on the fee vector $(f_k, f_{-k})$, where $f_k$ is the 
+fee set by pool $k$ and $f_{-k} = (f_j)_{j \neq k}$ denotes the fees of competing pools. 
+We therefore write
+\begin{equation}\label{eq:hashrate_f}
+    H_k(f_k, f_{-k}) = \sum_{i \in \mathcal{I}_k(f_k, f_{-k})} \lambda_i,
+\end{equation}
+where $\mathcal{I}_k(f_k, f_{-k})$ denotes the set of miners who join pool $k$ under 
+the fee profile $(f_k, f_{-k})$, and $\lambda_i$ is the hashpower contributed by miner $i$. Thus the share-arrival intensity of pool $k$ is given by
+
+\begin{equation}\label{eq:new_pool_intensity}
+    \mu_k = \frac{H_k(f_k, f_{-k})}{\delta_k}.
+\end{equation}
+In particular, if all miners join pool $k$, then $\mathcal{I}_k = \{1, \dots, n\}$ 
+and $H_k(f_k, f_{-k}) = \lambda$, where $\lambda = \sum_{i=1}^{n} \lambda_i$ 
+denotes the total hashpower available on the network. 
+
+The manager evaluates outcomes according to a conditional mean--variance criterion. 
+For a given realization of the aggregate hashrate $H_k$, the surplus process 
+$Y_t^{(k)}$ is a compound Poisson process with intensity 
+$\mu_k = H_k / \delta_k$. The manager's conditional objective is defined as
+\begin{equation}\label{mean_var_brut_pool}
+J_k(H_k)
+=
+\mathbb{E}\!\left[Y_t^{(k)} \mid H_k\right]
+-
+\eta_k\,\mathrm{Var}\!\left(Y_t^{(k)} \mid H_k\right),
+\end{equation}
+where $\eta_k>0$ is the manager's risk-aversion coefficient. Substituting (\ref{eq:mean_pool_mana}), (\ref{eq:var_pool_mana}) and (\ref{eq:new_pool_intensity}) into (\ref{mean_var_brut_pool}) yields
+\begin{equation}
+\label{eq:Jmanager_final_chapter}
+J_k(H_k(f_k, f_{-k}))
+=
+y_k
++
+H_k(f_k, f_{-k})\frac{b}{1+\delta_k}
+\left[
+f_k(1+\delta_k)-\delta_k
+-\eta_k b\Big(
+\delta_k(1-f_k)^2+\big(1-(1-f_k)\delta_k\big)^2
+\Big)
+\right].
+\end{equation}
+
+\subsection{Fee competition using expected approach}
+
+We now analyze a fee-setting game between the two pool managers. The parameters $(\delta_1,\delta_2)$ are fixed ex ante and interpreted as technological characteristics of the two pools. Managers choose fees $(f_1,f_2)$, miners then respond by selecting the option that maximizes their mean--variance score \eqref{eq:miner_opti}, and managers receive payoffs given by \eqref{eq:Jmanager_final_chapter}. 
+
+\subsubsection{Threshold structure of miner choices}
+
+We assume that miners are heterogeneous only through their risk-aversion coefficient and that
+\begin{equation}
+\gamma \sim \mathrm{Unif}[0,\bar{\gamma}],
+\end{equation}
+independently across $n$ miners. Since $\lambda_i$ factors out of all pairwise comparisons, it is convenient to normalize the miner's score by $\lambda_i$ and define
+\begin{equation}
+s_0(\gamma)=b-\gamma b^2,
+\end{equation}
+\begin{equation}
+s_k(\gamma)=b(1-f_k)-\gamma \delta_k b^2(1-f_k)^2,
+\qquad k\in\{1,2\}.
+\end{equation}
+Each miner selects $k \in \{0,1,2\}$ to maximize $s_k(\gamma)$. Since the mean--variance scores are affine in the risk-aversion parameter $\gamma$, pairwise differences are affine, implying that optimal choices are characterized by cutoff values of $\gamma$. Consequently, the set of types selecting any given option forms an (possibly empty) interval in $[0,\bar{\gamma}]$, and the equilibrium allocation is fully described by a finite collection of such thresholds.
+
+\begin{prop}[Threshold structure]\label{prop:threshold_structure}
+Consider a miner with risk-aversion parameter $\gamma \in [0,\bar{\gamma}]$. The optimal choice problem \eqref{eq:miner_opti} is characterized by three thresholds.
+
+\medskip
+
+\noindent\textbf{(i) Pool versus solo mining.}  
+For $k\in\{1,2\}$, pool $k$ is preferred to solo mining if and only if
+\begin{equation*}
+s_k(\gamma)\ge s_0(\gamma)
+\quad\Longleftrightarrow\quad
+\gamma \ge \gamma_{k0}(f_k),
+\end{equation*}
+where
+\begin{equation}
+\gamma_{k0}(f_k)
+=
+\frac{f_k}{b\left(1-\delta_k(1-f_k)^2\right)}.
+\end{equation}
+
+\medskip
+
+\noindent\textbf{(ii) Comparison between pools.}  
+Define
+\begin{equation}
+D_{12}(f_1,f_2)
+=
+\delta_1(1-f_1)^2-\delta_2(1-f_2)^2.
+\end{equation}
+If $D_{12}(f_1,f_2)\neq 0$, the comparison between the two pools is characterized by the threshold
+\begin{equation}
+\gamma_{12}(f_1,f_2)
+=
+\frac{f_2-f_1}{b\,D_{12}(f_1,f_2)},
+\end{equation}
+such that
+\begin{equation}
+s_1(\gamma)\ge s_2(\gamma)
+\quad\Longleftrightarrow\quad
+\begin{cases}
+\gamma \le \gamma_{12}(f_1,f_2), & \text{if } D_{12}(f_1,f_2)>0,\\
+\gamma \ge \gamma_{12}(f_1,f_2), & \text{if } D_{12}(f_1,f_2)<0.
+\end{cases}
+\end{equation}
+If $D_{12}(f_1,f_2)=0$, the comparison between the two pools is independent of $\gamma$ and depends only on expected returns.
+
+\medskip
+
+\noindent\textbf{(iii) Partition of the type space.}  
+The interval $[0,\bar{\gamma}]$ is partitioned into at most three subintervals, corresponding respectively to miners who optimally choose solo mining, pool~1, and pool~2.
+\end{prop}
+
+\begin{proof}
+For each $k\in\{0,1,2\}$, the score $s_k(\gamma)$ is affine in $\gamma$. Hence, for any pair $(i,j)$, the difference $s_i(\gamma)-s_j(\gamma)$ is also affine and admits at most one root. Each pairwise comparison therefore induces a unique threshold value of $\gamma$, which establishes the expressions for $\gamma_{k0}$ and $\gamma_{12}$. The partition of the interval $[0,\bar{\gamma}]$ follows directly from these pairwise comparisons.
+\end{proof}
+
+\begin{remark}[Economic interpretation]\label{remark:Economic_interpretation}
+The thresholds $\gamma_{k0}(f_k)$ represent entry conditions into the pooling market: only sufficiently risk-averse miners prefer joining a pool over solo mining. The threshold $\gamma_{12}(f_1,f_2)$ captures the trade-off between competing pools and reflects their relative risk profiles through the term $D_{12}(f_1,f_2)$. When $D_{12}>0$, pool~1 is more risky than pool~2 and is therefore preferred only by miners with relatively low risk aversion. Conversely, when $D_{12}<0$, pool~1 offers lower variance and attracts the most risk-averse miners. 
+\end{remark}
+This implies a monotone sorting of miners according to their risk preferences: the mining ecosystem endogenously segments into groups that differ only through their degree of risk aversion. Consequently, the allocation of miners across pools is fully determined by the relative positions of the thresholds $\gamma_{10}$, $\gamma_{20}$, and $\gamma_{12}$. The mechanism is illustrated in Figure~\ref{fig:gamma_thresholds}, where the intersections of the score functions determine the relevant thresholds and the induced partition of the type space.
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{gamma_thresholds.png}
+\caption{Mean--variance scores as functions of the risk-aversion parameter $\gamma$. 
+The intersections of the score functions determine the thresholds 
+$\gamma_{10}$, $\gamma_{20}$, and $\gamma_{12}$, which partition the support 
+$\gamma\in[0,\bar{\gamma}]$ into regions where miners optimally choose 
+solo mining, pool 1, or pool 2.}
+\label{fig:gamma_thresholds}
+\end{figure}
+
+
+\subsubsection{Expected participation and hashrate allocation}
+
+The threshold structure established in Proposition~\ref{prop:threshold_structure} 
+allows for a tractable characterization of miner participation. Since miners are 
+heterogeneous only through their risk-aversion parameter $\gamma$, and since the 
+optimal choice is determined by threshold comparisons, the allocation of miners 
+across alternatives can be obtained by measuring the corresponding intervals in 
+the support $[0,\bar{\gamma}]$.
+
+We denote by $p_k(f_1,f_2)$ the probability that a randomly selected miner joins 
+option $k\in\{0,1,2\}$, where $k=0$ corresponds to solo mining. Under the assumption 
+that $\gamma \sim \mathrm{Unif}[0,\bar{\gamma}]$, these probabilities are proportional 
+to the length of the intervals identified in Proposition~\ref{prop:threshold_structure}.
+
+\begin{prop}[Participation probabilities]\label{prop:participation_probabilities}
+Let $(f_1,f_2)\in[0,1)^2$ be a given fee profile. The participation probabilities 
+are determined by the relative position of the thresholds 
+$\gamma_{10}(f_1)$, $\gamma_{20}(f_2)$, and $\gamma_{12}(f_1,f_2)$.
+
+\medskip
+
+\noindent\textbf{(i) Case $D_{12}(f_1,f_2)>0$.}  
+Pool~1 is preferred only by sufficiently weakly risk-averse miners. The participation 
+probability of pool~1 is given by
+\begin{equation}
+p_1(f_1,f_2)
+=
+\frac{
+\big[
+\min\{\bar{\gamma},\gamma_{12}(f_1,f_2)\}
+-
+\max\{0,\gamma_{10}(f_1)\}
+\big]_+
+}{\bar{\gamma}}.
+\end{equation}
+
+\medskip
+
+\noindent\textbf{(ii) Case $D_{12}(f_1,f_2)<0$.}  
+Pool~1 is preferred by sufficiently risk-averse miners. The participation probability 
+of pool~1 is given by
+\begin{equation}
+p_1(f_1,f_2)
+=
+\frac{
+\big[
+\bar{\gamma}
+-
+\max\{0,\gamma_{10}(f_1),\gamma_{12}(f_1,f_2)\}
+\big]_+
+}{\bar{\gamma}}.
+\end{equation}
+
+\medskip
+
+\noindent\textbf{(iii) Case $D_{12}(f_1,f_2)=0$.}  
+The comparison between the two pools is independent of $\gamma$. If $f_1\le f_2$, 
+pool~1 weakly dominates pool~2, and its participation probability reduces to
+\begin{equation}
+p_1(f_1,f_2)
+=
+\frac{
+\big[
+\bar{\gamma}
+-
+\max\{0,\gamma_{10}(f_1)\}
+\big]_+
+}{\bar{\gamma}}.
+\end{equation}
+Otherwise, $p_1(f_1,f_2)=0$.
+
+\medskip
+
+The participation probability of pool~2 is obtained symmetrically, and the share 
+of solo miners satisfies
+\begin{equation}
+p_0(f_1,f_2)
+=
+1-p_1(f_1,f_2)-p_2(f_1,f_2).
+\end{equation}
+\end{prop}
+
+
+\begin{proof}
+By Proposition~\ref{prop:threshold_structure}, each option $k\in\{0,1,2\}$ is chosen 
+on an interval $I_k(f_1,f_2)\subseteq[0,\bar{\gamma}]$ defined by the corresponding 
+threshold conditions. Since $\gamma \sim \mathrm{Unif}[0,\bar{\gamma}]$, we have
+\[
+p_k(f_1,f_2)=\mathbb{P}(\gamma\in {I}(f_1,f_2))
+=\frac{\mathrm{Leb}({I}(f_1,f_2))}{\bar{\gamma}},
+\]
+where $\mathrm{Leb}(\cdot)$ denotes the Lebesgue measure. The expressions follow 
+by identifying the relevant intervals in each case according to the ordering of 
+the thresholds $\gamma_{10}$, $\gamma_{20}$, and $\gamma_{12}$.
+\end{proof}
+
+Let $n$ denote the total number of miners. The expected number of miners joining 
+option $k$ is given by
+\begin{equation}
+\mathbb{E}[N_k(f_1,f_2)]
+=
+n\,p_k(f_1,f_2),
+\qquad k\in\{0,1,2\}.
+\end{equation}
+
+To relate participation to aggregate mining power, we assume that individual 
+hashrates $(\lambda_i)_{i=1}^n$ are independent of risk preferences and satisfy
+\begin{equation}
+\sum_{i=1}^n \lambda_i = \lambda,
+\qquad
+\lambda_i \perp \gamma_i.
+\end{equation}
+Under this assumption, expected hashrates are proportional to participation probabilities:
+\begin{equation}
+\mathbb{E}[H_k(f_1,f_2)]
+=
+\lambda\,p_k(f_1,f_2),
+\qquad k\in\{0,1,2\}.
+\end{equation}
+
+This characterization provides a complete description of the demand side of the 
+mining market. The participation probabilities are piecewise-defined functions of 
+the fee profile $(f_1,f_2)$, with kinks arising when one of the thresholds 
+$\gamma_{10}$, $\gamma_{20}$, or $\gamma_{12}$ reaches the boundary of the support 
+$[0,\bar{\gamma}]$. As a consequence, marginal changes in fees may induce discrete 
+shifts in participation through changes in the ordering of these thresholds. Moreover, the aggregation step shows that the distribution of hashrate across pools is entirely summarized by the probabilities $(p_0,p_1,p_2)$ and the total available hashrate $\lambda$. This reduction will be instrumental in the subsequent analysis of pool managers' optimal fee-setting behavior.
+
+\subsubsection{Expected payoffs of pool managers}
+
+Using the aggregation result $\mathbb{E}[H_k(f_1,f_2)] = \lambda\,p_k(f_1,f_2)$ established in the previous subsection, the expected payoff of pool manager $k\in\{1,2\}$ can be expressed directly as a function of the fee profile $(f_1,f_2)$. Substituting into \eqref{eq:Jmanager_final_chapter} yields
+\begin{equation}\label{eq:EJ_compact_final}
+\mathbb{E}[J_k(f_1,f_2)]
+=
+y_k
++
+\lambda\,p_k(f_1,f_2)\frac{b}{1+\delta_k}B_k(f_k),
+\end{equation}
+where
+\begin{equation}
+B_k(f_k)
+=
+f_k(1+\delta_k)-\delta_k
+-\eta_k b
+\Big(
+\delta_k(1-f_k)^2+(1-(1-f_k)\delta_k)^2
+\Big).
+\end{equation}
+
+The representation \eqref{eq:EJ_compact_final} makes explicit that the manager’s payoff is linear in the participation probability $p_k(f_1,f_2)$ and therefore in the share of total hashrate attracted by the pool. The term $B_k(f_k)$ captures the contribution of the fee choice to the payoff per unit of hashrate, incorporating both the expected revenue and the variance penalty induced by the mean--variance criterion.
+
+This formulation highlights the trade-off faced by pool managers. Increasing the fee $f_k$ raises the expected revenue component of $B_k(f_k)$, but simultaneously reduces the participation probability $p_k(f_1,f_2)$ by making the pool less attractive to miners. In addition, the quadratic terms in $B_k(f_k)$ reflect the impact of risk preferences, penalizing fee levels that increase the variability of the surplus process.
+
+Consequently, the competition between pools can be interpreted as a pricing game with endogenous demand: each manager chooses a fee to balance the margin extracted from participating miners against the total hashrate attracted. This reduced-form representation provides the basis for the characterization of the Nash equilibrium in fees developed in the next subsection.
+
+\subsubsection{Nash equilibrium in a fee competition}
+
+We now formalize the strategic interaction between pool managers. The competitive setting considered in this paper is a static two-stage game. In the first stage, each pool manager $k\in\{1,2\}$ simultaneously chooses a fee $f_k \in [0,1)$. In the second stage, miners observe the fee profile $(f_1,f_2)$ and select the option that maximizes their mean--variance criterion. This induces participation probabilities $p_k(f_1,f_2)$ and determines the allocation of hashrate across pools.
+
+The resulting interaction can therefore be interpreted as a pricing game with endogenous demand, in which each manager anticipates the miners’ response when selecting fees.
+
+\begin{definition}[Nash equilibrium]
+A fee profile $(f_1^*,f_2^*) \in [0,1)^2$ is a Nash equilibrium if, for each $k \in \{1,2\}$, the fee $f_k^*$ solves
+\begin{equation}
+\sup_{f_k \in [0,1)} \; \mathbb{E}[J_k(f_k,f_{-k}^*)],
+\end{equation}
+where $f_{-k}^*$ denotes the equilibrium fee of the competing pool. Equivalently, a Nash equilibrium is a fee pair such that no pool manager can increase its expected payoff by unilaterally deviating from $f_k^*$, given the fee chosen by the other pool.
+\end{definition}
+
+The main difficulty in characterizing such an equilibrium lies in the fact that the participation probabilities $p_k(f_1,f_2)$ are piecewise-defined functions of the fee profile. Their analytical expressions depend on the ordering of the thresholds $\gamma_{10}$, $\gamma_{20}$, and $\gamma_{12}$, as well as on the sign of $D_{12}(f_1,f_2)$. As a consequence, the expected payoff functions are generally not globally smooth, and the analysis must be conducted region by region.
+
+We focus on an interior coexistence region in which both pools attract a strictly positive fraction of miners. Consider the region defined by
+\begin{equation}\label{eq:region_conditions_refined}
+D_{12}(f_1,f_2)<0,
+\qquad
+0<\gamma_{12}(f_1,f_2)<\bar{\gamma},
+\qquad
+\gamma_{12}(f_1,f_2)\geq \gamma_{10}(f_1),
+\qquad
+\gamma_{12}(f_1,f_2)\geq \gamma_{20}(f_2).
+\end{equation}
+In this configuration, the participation probabilities simplify to
+\begin{equation}
+p_1(f_1,f_2)
+=
+\frac{\bar{\gamma}-\gamma_{12}(f_1,f_2)}{\bar{\gamma}},
+\qquad
+p_2(f_1,f_2)
+=
+\frac{\gamma_{12}(f_1,f_2)-\gamma_{20}(f_2)}{\bar{\gamma}}.
+\end{equation}
+
+Within this region, the expected payoff functions are differentiable, and interior equilibria can be characterized using first-order conditions. For manager $k$, the optimality condition is given by
+\begin{equation}\label{eq:foc_general_refined}
+\frac{\partial \mathbb{E}[J_k]}{\partial f_k}(f_1,f_2)
+=
+\lambda\frac{b}{1+\delta_k}
+\left[
+\frac{\partial p_k}{\partial f_k}(f_1,f_2)\,B_k(f_k)
++
+p_k(f_1,f_2)\,B_k'(f_k)
+\right]
+=0.
+\end{equation}
+
+This condition admits a natural economic interpretation. The first term captures the marginal effect of the fee on participation (demand effect), while the second term captures the marginal effect on per-unit profitability (margin effect). At equilibrium, these two forces exactly offset each other. 
+Using the expressions of $p_k(f_1,f_2)$ in the coexistence region, one obtains explicit formulas for the derivatives $\partial p_k/\partial f_k$ and $B_k'(f_k)$ (see Appendix \ref{appendix:derivatives}), and hence a system of two coupled equations
+
+\begin{equation}
+\begin{aligned}
+\frac{\partial \mathbb{E}[J_1]}{\partial f_1}(f_1^*,f_2^*) &= 0, \\
+\frac{\partial \mathbb{E}[J_2]}{\partial f_2}(f_1^*,f_2^*) &= 0.
+\end{aligned}
+\end{equation}
+
+
+A candidate equilibrium $(f_1^*,f_2^*)$ must therefore solve this system. However, this is not sufficient. Since the expressions for $p_1$ and $p_2$ are valid only within the region defined by \eqref{eq:region_conditions_refined}, any solution must also satisfy the consistency conditions
+\begin{equation}
+D_{12}(f_1^*,f_2^*)<0,
+\qquad
+0<\gamma_{12}(f_1^*,f_2^*)<\bar{\gamma},
+\qquad
+\gamma_{12}(f_1^*,f_2^*)\geq \gamma_{10}(f_1^*),
+\qquad
+\gamma_{12}(f_1^*,f_2^*)\geq \gamma_{20}(f_2^*).
+\end{equation}
+
+These constraints ensure that the candidate solution is consistent with the underlying participation structure. If any of these conditions fails, the equilibrium does not belong to the interior coexistence region, and the analysis must be carried out in the corresponding alternative region of the fee space.
+\begin{ex}\label{ex:1}
+We consider a fee-setting game with two PPS pools and a continuum of miners whose risk-aversion parameter is uniformly distributed on $[0,\bar{\gamma}]$. The parameters are set as
+\[
+b=3.125,
+\qquad
+\bar{\gamma}=0.4,
+\qquad
+\lambda=100,
+\]
+\[
+\delta_1=0.008,
+\qquad
+\delta_2=0.08,
+\qquad
+\eta_1=0.01,
+\qquad
+\eta_2=0.001,
+\qquad
+y_1=y_2=100.
+\]
+
+Solving the first-order conditions in the interior coexistence region yields the candidate fee profile
+\[
+f_1^*=9.9949901714\%,
+\qquad
+f_2^*=8.5458873160\%,
+\]
+
+and the solution is consistent with the interior coexistence region. The corresponding allocation of hashrate across solo mining and the two pools is illustrated in Figure~\ref{fig:hashrate_pie}, which reports the proportion of total hashrate collected by each option.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.4\textwidth]{hashrate_pie.png}
+\caption{Distribution of the hashrate power among solo, pool 1 and pool2.}
+\label{fig:hashrate_pie}
+\end{figure}
+\end{ex}
+
+
+The equilibrium in Example \ref{ex:1} therefore reflects the endogenous segmentation of miners according to their risk preferences. This example also highlights a limitation of the mean--variance framework in the present setting. Since each miner selects the single alternative that maximizes its objective function, the allocation rule is of all-or-nothing type: a miner can join one pool or mine solo, but cannot diversify its hashrate across several pools. From an economic perspective, this restriction is strong, as diversification is a natural response to risk. This limitation motivates the introduction of the dividend-based approach in the next chapter, which provides a richer framework for the analysis of mining decisions and pool competition.
+
+\subsection{Sensitivity Analysis Around the Baseline Calibration}
+
+We now complement the baseline equilibrium computation with a local sensitivity analysis around the reference calibration. The objective is not to establish global existence over the whole parameter space, but rather to assess the numerical stability and economic robustness of the equilibrium in a neighborhood of the benchmark values.
+
+Our baseline specification is given by
+\[
+b=3.125,\qquad \bar{\gamma}=0.4,\qquad \Lambda=100,\qquad y_1=y_2=100,
+\]
+together with
+\[
+\delta_1=0.008,\qquad \delta_2=0.08,\qquad \eta_1=0.01,\qquad \eta_2=0.001.
+\]
+On the competition domain \(f_1,f_2\in[0,0.15]\), the validated equilibrium is
+\[
+f_1^*\approx 0.09995,\qquad f_2^*\approx 0.08546,
+\]
+with participation shares
+\[
+p_0\approx 0.07327,\qquad p_1\approx 0.80816,\qquad p_2\approx 0.11857,
+\]
+and expected manager payoffs
+\[
+E[J_1]\approx 115.47,\qquad E[J_2]\approx 100.32.
+\]
+
+\paragraph{Sensitivity with respect to \(\eta_1\) and \(\eta_2\).}
+
+We first study how the equilibrium varies when the managers' risk-aversion parameters change locally around the baseline configuration. Since the low-fee equilibrium of the initial example is not present over the entire \((\eta_1,\eta_2)\)-space, we restrict attention to a local rectangle on which the equilibrium remains numerically validated throughout the grid. More precisely, we consider
+\[
+\eta_1 \in [0.008,\,0.02],\qquad \eta_2 \in [0.001,\,0.005].
+\]
+
+Over this region, we compute the surfaces associated with the equilibrium objects
+\[
+E[J_1](\eta_1,\eta_2),\quad f_1^*(\eta_1,\eta_2),\quad p_1^*(\eta_1,\eta_2),
+\]
+and
+\[
+E[J_2](\eta_1,\eta_2),\quad f_2^*(\eta_1,\eta_2),\quad p_2^*(\eta_1,\eta_2).
+\]
+The numerical evidence shows that the equilibrium varies smoothly over this neighborhood, with no breakdown of validation on the displayed grid. Hence, the baseline outcome is locally robust with respect to perturbations in the managers' risk-aversion parameters.
+
+From an economic viewpoint, the main qualitative asymmetry of the benchmark is preserved throughout this region: pool~1 retains the larger participation share and the larger expected payoff, while pool~2 remains active but comparatively smaller. In other words, local changes in \(\eta_1\) and \(\eta_2\) modify the levels of payoffs, fees, and participation rates, but do not overturn the basic ranking implied by the reference calibration.
+
+\paragraph{Sensitivity with respect to \(\delta_1\) and \(\delta_2\).}
+
+We next analyze the local dependence of the equilibrium on the pool-specific variance parameters \(\delta_1\) and \(\delta_2\), while keeping the risk-aversion parameters fixed at their baseline values,
+\[
+\eta_1=0.01,\qquad \eta_2=0.001.
+\]
+Again, the analysis is conducted on a local rectangle chosen so that the equilibrium remains validated throughout the grid. Specifically, we consider
+\[
+\delta_1 \in [0.006,\,0.012],\qquad \delta_2 \in [0.065,\,0.095].
+\]
+
+On this domain, we compute the equilibrium surfaces
+\[
+E[J_1](\delta_1,\delta_2),\quad f_1^*(\delta_1,\delta_2),\quad p_1^*(\delta_1,\delta_2),
+\]
+and
+\[
+E[J_2](\delta_1,\delta_2),\quad f_2^*(\delta_1,\delta_2),\quad p_2^*(\delta_1,\delta_2).
+\]
+These figures provide a local characterization of how the equilibrium responds to changes in the pools' variance-reduction technologies. As in the \((\eta_1,\eta_2)\)-analysis, the computed surfaces remain regular over the displayed region, which indicates that the benchmark equilibrium is also locally robust with respect to moderate perturbations in \(\delta_1\) and \(\delta_2\).
+
+This second exercise is economically useful because the parameters \(\delta_k\) directly govern the mean-variance trade-off offered by each pool. Varying \(\delta_1\) and \(\delta_2\) therefore changes both the attractiveness of each pool to miners and the managers' profit margins. The numerical results confirm that these effects can be substantial in level, while still preserving the existence of a well-defined low-fee equilibrium in a neighborhood of the baseline calibration.
+
+\paragraph{Interpretation.}
+
+Taken together, these local sensitivity exercises show that the benchmark equilibrium of the initial example is not an isolated numerical artifact. Instead, it persists over non-trivial neighborhoods in both the \((\eta_1,\eta_2)\) and \((\delta_1,\delta_2)\) dimensions. This reinforces the interpretation of the baseline outcome as a structurally meaningful equilibrium configuration of the model, rather than a knife-edge point in parameter space.
+
+At the same time, the analysis should be interpreted as local. The displayed surfaces do not claim that a validated equilibrium exists for all admissible parameter values. Rather, they show that, around the benchmark calibration, the equilibrium is stable enough to support comparative-statics conclusions on expected payoffs, equilibrium fees, and participation shares.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

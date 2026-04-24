@@ -1,0 +1,338 @@
+\section{Competition between pools with dividend strategy}
+
+\subsection{Wealth processes with diversification}
+\subsubsection{miners' wealth process}
+
+Consider $m \in \mathbb{N}$ mining pools, each offering a PPS contract characterized by a difficulty reduction $\delta_k$ and a fee $f_k$, for $k = 1, \dots, m$. Consider also a population of $n$ miners, indexed by $i = 1, \dots, n$. The wealth process \eqref{eq:surplus_solo_in_pool_mining} can be viewed as particular cases of a more general framework in which the miner allocates his computational resources $\lambda_i$ across multiple pools ($k = 1,\cdots,m$) and solo ($k=0$) simultaneously, according to a weight vector
+\[
+w = (w_{i,0}, w_{i,1}, \dots, w_{i,m}) \in \Delta_{i,m},
+\]
+where $\Delta_{i,m} = \left\{ w \in \mathbb{R_+}^{m+1} : \sum_{k=0}^m w_{i,k} = 1 \right\}$ denotes the unit simplex. The reward arrival rate of miner $i$ associated with pool $k$ is then given by
+\[
+\lambda_{i,k} = \frac{\lambda_i w_{i,k}}{\delta_k}, \quad k = 0, \dots, m.
+\]
+
+The $\lambda_{i,k}$ define the intensities of conditionally independent Poisson processes given the allocation $w$. Aggregating these contributions, the total reward arrival process of the miner $(\hat{N}^{(i)}_t)_{t \geq 0}$ is a Poisson process with intensity
+\[
+\hat{\lambda}_i = \sum_{k=0}^m \lambda_{i,k}.
+\]
+Each reward originates from pool $k$ with probability $p_{i,k} = \lambda_{i,k} / \hat{\lambda} _i$ and has magnitude $b_k = b(1-f_k)\delta_k$. Therefore, the miner’s wealth process can be written as
+\begin{equation}\label{welath_multi_miner}
+X_t = x - c \cdot t + \sum_{j=1}^{\hat{N}^{(i)}_t} B^{(i)}_j,
+\end{equation}
+where $(B_j)_{j \geq 1}$ is a sequence of independent and identically distributed random variables satisfying
+\[
+\mathbb{P}(B^{(i)} = b_k) = \frac{\lambda_{i,k}} {\hat{\lambda}_i} = p_{i,k}, \quad k = 0, \dots, m.
+\]
+
+Figure \ref{fig:multipool_structure} illustrates how the wealth process evolves in this architecture.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{multipool_diagram.png}
+    \caption{Multi-pool mining architecture.}
+    \label{fig:multipool_structure}
+\end{figure}
+
+\subsubsection{Pool managers' wealth process}
+
+Under this allocation, the total hashpower received by pool $k$ is given by
+\[
+H_k(w)=\sum_{i=1}^n \lambda_i w_{i,k}.
+\]
+As in the single-pool participation setting, the arrival rate of shares in pool $k$ is determined by the effective difficulty parameter $\delta_k$, yielding a Poisson intensity
+\[
+\mu_k(w)=\frac{H_k(w)}{\delta_k}
+=\frac{1}{\delta_k}\sum_{i=1}^n \lambda_i w_{i,k}.
+\]
+
+Each share submitted to pool $k$ is either a valid block with probability $\delta_k/(1+\delta_k)$, or a non-block share with probability $1/(1+\delta_k)$. Regardless of its nature, the pool manager pays a fixed PPS reward $b_k=b\,\delta_k(1-f_k)$ to the contributing miner. In the event of a valid block, the manager additionally receives the block reward $b$. The wealth process of the manager of pool $k$ is therefore given by the compound Poisson process
+\begin{equation}\label{eq:surplus_pool_manager_split}
+Y_t^{(k)} = y_k + \sum_{j=1}^{M_t^{(k)}} V_j^{(k)},
+\end{equation}
+where, conditionally on the allocation profile $w$,
+\begin{itemize}
+    \item $(M_t^{(k)})_{t\geq 0}$ is a Poisson process with intensity $\mu_k(w)$,
+    \item the sequence $(V_j^{(k)})_{j\geq 1}$ is i.i.d. with distribution
+    \[
+    \mathbb{P}\!\left(V^{(k)}=-b_k\right)=\frac{1}{1+\delta_k},
+    \qquad
+    \mathbb{P}\!\left(V^{(k)}=b-b_k\right)=\frac{\delta_k}{1+\delta_k}.
+    \]
+\end{itemize}
+
+We emphasize that, in contrast to the single-pool participation case, the total hashpower $H_k(w)$ is no longer determined by a partition of miners, but rather by the aggregation of fractional contributions. This induces a coupling across pools through the allocation profile $w$, while preserving conditional independence of the underlying Poisson processes.
+
+
+
+\subsection{Expected discounted dividend maximization}
+\subsubsection{miners' dividend strategy}
+
+A natural performance criterion for the miner is given by the classical dividend optimization problem from risk theory. The wealth process \eqref{welath_multi_miner} can be interpreted as the surplus of the miner, from which cash flows are extracted over time in the form of dividends. Formally, a dividend strategy is described by a non-decreasing, adapted process $(L_t)_{t \geq 0}$, representing the cumulative payments made up to time $t$. The controlled surplus process then writes
+\[
+    U_t = X_t - L_t,
+\]
+and ruin occurs at the stopping time
+\[
+    \tau = \inf\{t \geq 0 : U_t < 0\}.
+\]
+The objective of the miner is to maximize the expected discounted dividends
+until ruin, namely
+\begin{equation}\label{eq:dividend_value}
+    V(x) = \sup_{L} \mathbb{E}_x\left[\int_0^{\tau} e^{-rt} \, dL_t \right],
+\end{equation}
+where $r \geq 0$ is a discount rate. For any fixed allocation profile $w \in \Delta_{i,m}$, the process $(X_t)_{t \geq 0}$ is a spectrally positive L\'{e}vy process. In this setting, it is well established that the optimal dividend strategy is of barrier type (see \citet{avanzi2007optimal} and \citet{bayraktar2013optimal}): there exists a level $a_w^* > 0$ such that it is optimal to pay out immediately any surplus above $a_w^*$, while no dividends are paid when the surplus lies below this level. The controlled process is thus reflected at the barrier $a_w^*$.
+
+Denoting by $V_w(x)$ the value function associated with \eqref{eq:dividend_value} under the optimal barrier strategy, the miner's problem reduces to a static optimization over the allocation set, since each $w \in \Delta_{i,m}$ uniquely determines an optimal barrier $a_w^*$ and a corresponding value $V_w(x)$. The optimal allocation is therefore
+\[
+    w^* = \arg\max_{w \in \Delta_{i,m}} V_w(x).
+\]
+The contribution of \citet{goffard2025hashpower} is to show that this problem can be tractably analyzed in the context of PPS mining pools. By exploiting the L\'{e}vy structure of the wealth process, the value function $V_w(x)$ can be characterized in terms of scale functions. This representation allows for the computation of both the optimal barrier level $a_w^*$ and the associated value $V_w(x)$, thereby enabling a systematic comparison of PPS contracts and a characterization of the optimal allocation $w^*$.
+
+\subsubsection{pool managers' dividend strategy}
+
+Having characterized the wealth process \eqref{eq:surplus_pool_manager_split} of the pool
+manager, we now turn to the associated dividend optimization problem. The surplus process of
+pool $k$ is a pure jump process with two-sided increments: upward jumps of size $b - b_k$ occur
+upon block discovery, while downward jumps of size $b_k$ occur upon submission of a non-block
+share. Since the process is constant between consecutive jump times, no strategic decision needs
+to be made in continuous time. It is therefore sufficient to inspect the process at jump times only. Let $(T_i^{(k)})_{i \geq 1}$ denote the jump times of $(M_t^{(k)})_{t \geq 0}$, which form a
+sequence of i.i.d.\ exponential random variables with parameter $\mu_k(w)$. The embedded
+discrete-time process
+\[
+    S_n^{(k)} := Y_{T_n^{(k)}}^{(k)} = y_k + \sum_{i=1}^n V_i^{(k)}, \quad n \geq 0,
+\]
+is a standard random walk. A dividend strategy is then a sequence of decisions
+$\mathcal{S} = \{f_1, f_2, \ldots\}$, where each $f_n : \mathbb{R} \to \mathbb{R}_+$ specifies
+the dividend paid at step $n$, leading to the controlled process
+\[
+    R_n^{(k)} = S_{n-1}^{(k)} - f_{n-1}\!\left(S_{n-1}^{(k)}\right) + V_n^{(k)},
+    \quad n \geq 1.
+\]
+Ruin can only occur at jump times, and is defined as
+\[
+    \tau^{(k)} = \inf\!\left\{n \geq 1 : R_n^{(k)} < 0\right\}.
+\]
+The objective of the pool manager is to maximize the expected discounted dividends
+\[
+    V^{(k)}(y_k) = \mathbb{E}_{y_k}\!\left[
+        \sum_{n=1}^{\tau^{(k)}} e^{-r T_n^{(k)}} f_n\!\left(S_{n-1}^{(k)}\right)
+    \right],
+\]
+where $r \geq 0$ is the discount rate. This framework coincides with that of
+\citet{albrecher2011randomized}, in which the optimal strategy is shown to be a
+\textit{band strategy}: dividends are paid according to a state-dependent rule determined by a
+finite collection of intervals. Band strategies are, however, difficult to handle analytically. To obtain a more tractable structure, we impose the following simplifying assumptions, which are natural in the context of
+a homogeneous PPS pool.
+
+\begin{hp}\label{ass:integer_state}
+The state space of $(S_n^{(k)})_{n \geq 0}$ and $(R_n^{(k)})_{n \geq 0}$ is $\mathbb{Z}$.
+\end{hp}
+
+Assumption~\ref{ass:integer_state} requires that $b_k \in \mathbb{N}$, that the initial surplus
+$y_k$ is proportional to $b_k$, and that $b$ is proportional to $b_k$. Under this assumption, $(S_n^{(k)})_{n \geq 0}$ is an integer-valued random walk with increments taking
+values in $\{-1,\, b-b_k\}$ using the taxonomy of \citet{gerber1972games} for which a barrier strategy is optimal as shown in \citet{miyasawa1961economic}: there
+exists a threshold $a_k^* \in \mathbb{N}$ such that the pool manager pays out all surplus above
+$a_k^*$ as dividends, while retaining the full surplus when it lies below this level. We now characterize explicitly the value function and the optimal barrier level.
+
+Define the vector of monomials
+\begin{equation}\label{eq:rho_vector}
+    \bm{\rho}^{[y]} := \left(\rho_1^y,\, \rho_2^y,\, \dots,\, \rho_k^y\right)^\top \in \mathbb{C}^k,
+\end{equation}
+where $\rho_1, \dots, \rho_k \in \mathbb{C}$ denote the $k$ roots of the characteristic equation
+\begin{equation}\label{eq:characteristic}
+    (r + \mu)\,\rho \;-\; \mu p\,\rho^{k} \;-\; \mu q \;=\; 0,
+\end{equation}
+with $p = \delta/(1+\delta)$, $q = 1/(1+\delta)$, and $\mu = \mu_k(w)$ the Poisson intensity
+defined in \eqref{eq:surplus_pool_manager_split}.
+
+\begin{prop}\label{prop:optimal_barrier}
+Let $(\widetilde Y_t^{(k)})_{t \geq 0}$ denote the normalized surplus process of pool $k$ defined by
+\[
+\widetilde Y_t^{(k)} := \frac{Y_t^{(k)}}{b_k}.
+\]
+Under Assumption~\ref{ass:integer_state}, it is an integer-valued compound Poisson process with increments in $\{-1,\, k-1\}$, where $k = b/b_k \in \mathbb{N}_{\geq 2}$. Assume
+moreover that the drift condition
+\begin{equation}\label{eq:drift_condition}
+    p(k-1) - q > 0
+\end{equation}
+holds, ensuring that the process is not absorbed at ruin almost surely. For a fixed
+candidate barrier $a \in \mathbb{N}$ with $a \geq k - 1$, the value function under
+the barrier strategy at level $a$ takes the form
+\begin{equation}\label{eq:value_function_form}
+    V^{(k)}(y,\, a) \;=\; \bm{\rho}^{[y]} \cdot \mathbf{c}(a), \quad y = 0, 1, \dots, a,
+\end{equation}
+where the coefficient vector $\mathbf{c}(a) \in \mathbb{C}^k$ is the unique solution of the
+linear system
+\begin{equation}\label{eq:linear_system}
+    \mathbf{A}(a)\,\mathbf{c}(a) \;=\; \mathbf{d}(a).
+\end{equation}
+The matrix $\mathbf{A}(a) \in \mathbb{C}^{k \times k}$ and the vector
+$\mathbf{d}(a) \in \mathbb{C}^{k}$ are defined row-wise by
+\begin{equation}\label{eq:A_matrix}
+    \mathbf{A}(a)_j \;=\;
+    \begin{cases}
+        (r+\mu)\,\bm{\rho}^{[y_j]} - \mu p\,\bm{\rho}^{[y_j + k - 1]},
+        & j = 1, \\[0.6em]
+        (r+\mu)\,\bm{\rho}^{[y_j]} - \mu p\,\bm{\rho}^{[a]}
+        - \mu q\,\bm{\rho}^{[y_j - 1]},
+        & j = 2, \dots, k,
+    \end{cases}
+\end{equation}
+\begin{equation}\label{eq:d_vector}
+    \mathbf{d}(a)_j \;=\;
+    \begin{cases}
+        0,
+        & j = 1, \\[0.6em]
+        \mu p\,(y_j + k - 1 - a),
+        & j = 2, \dots, k,
+    \end{cases}
+\end{equation}
+where $y_1 = 0$ and $y_j = a - (k-1) + (j-1)$ for $j = 2, \dots, k$.
+The optimal barrier is then given by
+\begin{equation}\label{eq:optimal_barrier}
+    a_k^* \;=\; \operatorname*{arg\,max}_{a \,\in\, \mathbb{N},\; a \,\geq\, k-1}
+    V^{(k)}(y,\, a).
+\end{equation}
+\end{prop}
+
+\begin{proof}
+We derive the value function by analyzing the dynamic programming equation satisfied
+by $V^{(k)}(\cdot, a)$ over an infinitesimal time interval $dt$. Since the surplus
+process is constant between jump times, the only events to consider are the arrival
+or non-arrival of a jump during $[0, dt)$.
+
+\medskip
+\noindent\textbf{Step 1: Dynamic programming equation.}
+With probability $1 - \mu\,dt + o(dt)$, no jump occurs and the value function is
+discounted at rate $r$. With probability $\mu p\,dt + o(dt)$, an upward jump of
+size $k-1$ occurs, and with probability $\mu q\,dt + o(dt)$, a downward jump of
+size $1$ occurs. Letting $dt \to 0$ and rearranging, one obtains the
+difference equation
+\begin{equation}\label{eq:diff_eq}
+    (r + \mu)\,V^{(k)}(y,a)
+    \;=\;
+    \mu p\,V^{(k)}(y + k - 1,\, a)
+    \;+\;
+    \mu q\,V^{(k)}(y - 1,\, a),
+    \quad y = 1, \dots, a-(k-1),
+\end{equation}
+which holds in the interior of the state space, away from the boundaries.
+This is a linear homogeneous difference equation of order $k$, whose general
+solution is of the form
+\begin{equation}\label{eq:general_solution}
+    V^{(k)}(y, a) \;=\; \sum_{i=1}^{k} c_i(a)\,\rho_i^{\,y}
+    \;=\; \bm{\rho}^{[y]} \cdot \mathbf{c}(a),
+\end{equation}
+where $\rho_1, \dots, \rho_k$ are the roots of the characteristic
+equation~\eqref{eq:characteristic} and $\mathbf{c}(a) = (c_1(a), \dots, c_k(a))^\top$
+are coefficients to be determined by boundary conditions (see e.g. \citet{jerri2013linear}).
+
+\medskip
+\noindent\textbf{Step 2: Boundary conditions at $y = 0$.}
+For $y = 0$, a downward jump leads to immediate ruin, so that
+$V^{(k)}(-1, a) = 0$. The difference equation~\eqref{eq:diff_eq} then
+simplifies to
+\begin{equation}\label{eq:bc_ruin}
+    (r + \mu)\,V^{(k)}(0,\, a) \;=\; \mu p\,V^{(k)}(k-1,\, a).
+\end{equation}
+Substituting the general solution~\eqref{eq:general_solution} into~\eqref{eq:bc_ruin}
+yields the first row of the linear system, namely
+\begin{equation*}
+    \left((r+\mu)\,\bm{\rho}^{[0]} - \mu p\,\bm{\rho}^{[k-1]}\right)
+    \cdot \mathbf{c}(a) \;=\; 0,
+\end{equation*}
+which corresponds to row $j = 1$ of~\eqref{eq:A_matrix}--\eqref{eq:d_vector}
+with $y_1 = 0$.
+
+\medskip
+\noindent\textbf{Step 3: Boundary conditions near the barrier.}
+For $y \in \{a-(k-1)+1, \dots, a\}$, an upward jump of size $k-1$ brings the
+surplus above the barrier. Under the barrier strategy, the excess is immediately
+paid as a lump-sum dividend and the surplus is reset to $a$, so that
+\begin{equation*}
+    V^{(k)}(y + k - 1,\, a)
+    \;\longrightarrow\;
+    V^{(k)}(a,\, a) + (y + k - 1 - a).
+\end{equation*}
+Substituting into~\eqref{eq:diff_eq} gives, for each such $y$,
+\begin{equation}\label{eq:bc_barrier}
+    (r+\mu)\,V^{(k)}(y,\,a)
+    \;=\;
+    \mu p\!\left(V^{(k)}(a,\,a) + y + k - 1 - a\right)
+    + \mu q\,V^{(k)}(y-1,\,a).
+\end{equation}
+Substituting the general solution~\eqref{eq:general_solution}
+into~\eqref{eq:bc_barrier} and rearranging yields, for $j = 2, \dots, k$,
+\begin{equation*}
+    \left(
+        (r+\mu)\,\bm{\rho}^{[y_j]}
+        - \mu p\,\bm{\rho}^{[a]}
+        - \mu q\,\bm{\rho}^{[y_j-1]}
+    \right) \cdot \mathbf{c}(a)
+    \;=\;
+    \mu p\,(y_j + k - 1 - a),
+\end{equation*}
+with $y_j = a-(k-1)+(j-1)$, which corresponds to rows $j = 2, \dots, k$
+of~\eqref{eq:A_matrix}--\eqref{eq:d_vector}.
+
+\medskip
+\noindent\textbf{Step 4: Determination of the optimal barrier.}
+Combining Steps 2 and 3 yields the complete $k \times k$ linear
+system~\eqref{eq:linear_system}, from which the coefficient vector $\mathbf{c}(a)$
+is uniquely determined for each candidate barrier $a \geq k-1$.
+The corresponding value function $V^{(k)}(y, a)$ is then evaluated via
+\eqref{eq:value_function_form}. The optimal barrier $a_k^*$ is defined
+as in~\eqref{eq:optimal_barrier}, and is obtained numerically by solving
+the system over a finite grid of candidate values and selecting the maximizer.
+\end{proof}
+
+\begin{ex}\label{ex:barrier}
+We illustrate numerically the characterization of the optimal dividend barrier
+for a PPS pool manager in the lattice setting of
+Proposition~\ref{prop:optimal_barrier}.
+
+The parameters are set as
+\[
+b = 40,
+\qquad
+f = 0.4,
+\qquad
+k = 10,
+\]
+\[
+\mu = 6,
+\qquad
+r = 0.05,
+\qquad
+x_0 = 20.
+\]
+
+The difficulty parameter is chosen so that the surplus process evolves on the
+lattice $b_k \mathbb{Z}$, namely
+\[
+\delta = \frac{1}{k(1-f)},
+\]
+which implies $b_k = b/k = 4$ and normalized increments in $\{-1,\,k-1\}$.
+
+For each candidate barrier level $a$, the value function $V(x_0,a)$ is computed
+analytically by solving the linear system associated with the boundary conditions
+of Proposition~\ref{prop:optimal_barrier}. The optimal barrier is obtained by
+maximizing $V(x_0,a)$ over a finite grid, yielding
+\[
+a^* = 108,
+\qquad
+V(x_0,a^*) \approx 77.3.
+\]
+
+To validate this result, we estimate the value function via Monte Carlo simulation of the controlled surplus process under the barrier strategy. The jump times are generated according to a Poisson process of intensity $\mu$, and discounted dividends are accumulated until ruin. Confidence intervals at the $95\%$ level are computed for each barrier. Figure~\ref{fig:barrier_validation} compares the analytical value function with the Monte Carlo estimates.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\textwidth]{div_analytic.png}
+\caption{Analytical value function $V(x_0,a)$ and Monte Carlo 95\% confidence intervals.}
+\label{fig:barrier_validation}
+\end{figure}
+\end{ex}
+
+

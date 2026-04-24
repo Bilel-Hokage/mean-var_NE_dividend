@@ -1,0 +1,103 @@
+% !TEX root = ../main.tex
+\section{Wealth processes for miners and pool managers}\label{sec:mining_pool}
+\subsection{miners' wealth process}\label{sec:sub_mining_pool}
+As introduced by \cite{hansjoerg2022profitability}, The miners' wealth can be modeled as a stochastic process
+\begin{equation}\label{eq:surplus_solo_mining}
+X_t = x -c\cdot t + N_t\cdot b,\text{ for } t\geq 0,
+\end{equation}
+where $x>0$ represents the initial capital, $c$ is the operational cost, $b$ is the reward for discovery of blocks and $(N_t)_{t\geq0}$ is a Poisson process with intensity $\lambda$, which represents the number of blocks found per unit of time. The variance of this process exposes miners to the risk of insolvency. To reduce income volatility, miners join mining pools, aggregating their computational power to increase the frequency of rewards and obtain more stable earnings. A pool manager oversees this collective activity by assessing each miner’s contribution and allocating rewards accordingly. This paper considers the Pay-per-Share (PPS) scheme which is a widely used reward mechanism. Under this system, miners submit shares as proof of their work. A share corresponds to a solution of a cryptographic puzzle with a lower difficulty than that required to mine a full block. A PPS deal is characterized by a difficulty reduction $\delta$ $\in(0,1]$ and a pool fee $f$ $\in[0,1)$. In the PPS framework, the pool manager pays a fixed reward $b_k<b$ to miners for each submitted share. Then the stochastic process that represents the miners' wealth becomes
+\begin{equation}\label{eq:surplus_solo_in_pool_mining}
+\tilde{X}_t = x -c\cdot t + \tilde{N}_t\cdot b_k,\text{ for } t\geq 0,
+\end{equation}
+where $b_k=b\cdot\delta\cdot(1-f)$ is the share reward and $(\tilde{N}_t)_{t\geq0}$ is a Poisson process with intensity $\tilde{\lambda}=\frac{\lambda}{\delta}\geq\lambda$, which exceeds that of $(N_t)_{t\geq0}$ in (\ref{eq:surplus_solo_mining}). The advantage of the PPS system is that it transfers risk from miners to pool managers. Equations (\ref{eq:surplus_solo_mining}) and (\ref{eq:surplus_solo_in_pool_mining}) allow \citet{albrecher2022blockchain} to quantify miners’ risk through ruin probabilities. Note that solo mining can be interpreted as a particular case of the PPS framework. Indeed, it corresponds to a contract with no fee and no difficulty reduction, that is, $f = 0$ and $\delta = 1$. In this case, the share reward reduces to $b_k = b$ and the arrival intensity becomes $\tilde{\lambda} = \lambda$. Consequently, equation (\ref{eq:surplus_solo_in_pool_mining}) simplifies to
+\begin{equation}
+\tilde{X}_t = x - c\cdot t + \tilde{N}_t \cdot b, \quad t \geq 0,
+\end{equation}
+which coincides with (\ref{eq:surplus_solo_mining}). Hence, solo mining can be viewed as a particular case of PPS contract.
+
+
+
+
+
+% JE VAIS AJOUTER çA POUR LA PARTIE DIVIDENDE ET JE VAIS COMMENCER PAR DIRE QU'IL FAUT ADAPTER LE PROCESSUS
+
+% More generally, the previous models can be viewed as particular cases of a more general framework in which the miner allocates her computational resources across multiple pools. A miner may choose to split her computational resources across several mining pools simultaneously. Consider $n \in \mathbb{N}$ mining pools, each offering a PPS contract characterized by a difficulty reduction $\delta_k$ and a fee $f_k$, for $k = 1, \dots, n$. These contractual parameters determine both the effective share arrival rate and the associated reward. More precisely, pool $k$ induces a share arrival intensity $\lambda / \delta_k$ and a reward per share $b_k = b\,\delta_k(1 - f_k)$. In addition, the miner retains the possibility to mine solo, which can be interpreted as an artificial pool indexed by $k = 0$, with $\delta_0 = 1$, $f_0 = 0$, and thus $b_0 = b$.
+
+% The miner allocates her total computational power $\lambda$ among the available options according to a weight vector
+% \[
+% w = (w_0, w_1, \dots, w_n) \in \Delta_n,
+% \]
+% where $\Delta_n = \left\{ w \in \mathbb{R}^{n+1} : \sum_{k=0}^n w_k = 1 \right\}$ denotes the unit simplex. The reward arrival rate associated with pool $k$ is then given by
+% \[
+% \mu_k = \frac{\lambda w_k}{\delta_k}, \quad k = 0, \dots, n.
+% \]
+
+% The $\mu_k$ define the intensities of conditionally independent Poisson processes given the allocation $w$. Aggregating these contributions, the total reward arrival process $(\hat{N}_t)_{t \geq 0}$ is a Poisson process with intensity
+% \[
+% \mu = \sum_{k=0}^n \mu_k.
+% \]
+% Each reward originates from pool $k$ with probability $p_k = \mu_k / \mu$ and has magnitude $b_k$. Therefore, the miner’s wealth process can be written as
+% \begin{equation}
+% X_t = x - c \cdot t + \sum_{i=1}^{\hat{N}_t} B_i,
+% \end{equation}
+% where $(B_i)_{i \geq 1}$ is a sequence of independent and identically distributed random variables satisfying
+% \[
+% \mathbb{P}(B = b_k) = \frac{\mu_k}{\mu} = p_k, \quad k = 0, \dots, n.
+% \]
+
+% This representation highlights that each contract affects both the arrival intensity and the reward size, which jointly determine the mean and variance of the miner’s wealth.
+
+% \begin{figure}[htbp]
+%     \centering
+%     \includegraphics[width=0.7\textwidth]{multipool_diagram.png}
+%     \caption{Multi-pool mining architecture.}
+%     \label{fig:multipool_structure}
+% \end{figure}
+
+
+\subsection{Pool manager's wealth process}\label{ssec:pool_manager_process}
+
+Consider $m \in \mathbb{N}$ mining pools, each offering a PPS contract characterized by a difficulty reduction $\delta_k$ and a fee $f_k$, for $k = 1, \dots, m$. A PPS pool $k$ attracts miners by offering a contract $(\delta_k, f_k)$.  These contractual parameters determine both the effective share arrival rate and the associated reward. More precisely, for a miner with hashrate $\lambda$, participation in pool $k$ leads to a share arrival intensity $\lambda / \delta_k$ and a reward per share $b_k = b\,\delta_k(1 - f_k)$. This contract increases the frequency of rewards while reducing their size, thereby lowering the variance of the miner’s wealth at the cost of a lower expected payoff. In addition, the miner retains the possibility to mine solo, which can be interpreted as an artificial pool indexed by $k = 0$, with $\delta_0 = 1$, $f_0 = 0$, and thus $b_0 = b$. The pool $k$ collects a total hashpower $H_k = \sum_{i \in \mathcal{I}} \lambda_i$, where $\mathcal{I}$ denotes the set of miners who joined pool $k$ and $\lambda_i$ is the hashpower contributed by miner $i$. The rate of arrival of shares of pool $k$ is given by
+\[
+    \mu_k = \frac{H_k}{\delta_k},
+\]
+which corresponds to the average number of shares found by the pool participants per time unit. Each share has probability $\delta_k/(1+\delta_k)$ of being an actual solution to the cryptographic 
+puzzle, and probability $1/(1+\delta_k)$ of being a simple share. The wealth process of the pool 
+manager is given by
+\begin{equation}\label{eq:surplus_pool_manager}
+    Y_t = y + \sum_{i=1}^{M_t} V_i,
+\end{equation}
+where 
+\begin{itemize}
+    \item $(M_t)_{t\geq 0}$ is a Poisson process with intensity $\mu_k$,
+    \item the $V_i$'s are i.i.d. with probability distribution
+    \[
+        \mathbb{P}\!\left(V = -b_k\right) = \frac{1}{1+\delta_k}, 
+        \qquad 
+        \mathbb{P}\!\left(V = b - b_k\right) = \frac{\delta_k}{1+\delta_k},
+    \]
+    where $b_k=b(1-f_k)\delta_k$ is the reward that the pool $k$ offers.
+\end{itemize}
+
+\begin{remark}
+Using the superposition, one can express the surplus of the pool manager (\ref{eq:surplus_pool_manager}) as the difference between two Poisson processes associated to deterministic positive and negative jumps.
+\end{remark}
+
+
+Each time a share arrives, the pool manager pays the miner the fixed PPS amount $b(1-f_k)\delta_k$, regardless of whether the share is a solution or not. When the share turns out to be an actual solution, the manager additionally collects the block reward $b$. The pool is profitable in expectation if and only if
+\begin{equation}
+\mathbb{E}[V] > 0,
+\end{equation}
+which determines admissible combinations of $(\delta,f)$. This formulation makes explicit that the PPS contract transfers risk from miners to the pool manager: increasing the frequency of rewards reduces miners' variance, while concentrating risk in the manager’s wealth process.
+
+
+
+
+
+
+
+
+
+
+
+
